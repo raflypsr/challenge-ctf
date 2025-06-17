@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky 777 Casino</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: #850000;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: gold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+        }
+        
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .slot {
+            width: 100px;
+            height: 150px;
+            background-color: #333;
+            border: 3px solid gold;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4em;
+            font-weight: bold;
+            color: white;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        #spin-btn {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+        
+        #spin-btn:hover {
+            background-color: #cc0000;
+            transform: scale(1.05);
+        }
+        
+        #spin-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .balance {
+            font-size: 1.2em;
+            margin-top: 15px;
+        }
+        
+        .balance span {
+            color: gold;
+            font-weight: bold;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .win {
+            background-color: rgba(0, 128, 0,.2);
+            border: 1px solid green;
+            color: lightgreen;
+        }
+        
+        .flag {
+            background-color: rgba(255, 215, 0, 0.2);
+            border: 1px solid gold;
+            color: gold;
+            font-family: monospace;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .jackpot-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+        
+        footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: #333;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎰 LUCKY 777 CASINO 🎰</h1>
+    </header>
+    
+    <div class="container">
+        <h2>Try your luck! Get 777 to win the FLAG!</h2>
+        
+        <div class="slot-machine">
+            <div class="slot" id="slot1">?</div>
+            <div class="slot" id="slot2">?</div>
+            <div class="slot" id="slot3">?</div>
+        </div>
+        
+        <div class="controls">
+            <button id="spin-btn">SPIN!</button>
+        </div>
+        
+        <div class="balance">
+            Credits: <span id="credits">100</span>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div id="flag" class="flag"></div>
+    </div>
+    
+    <div class="jackpot-animation" id="jackpot-animation"></div>
+    
+    <footer>
+        <p>CTF Challenge - Lucky 777 Casino | Find the vulnerability to win!</p>
+        <p>Each spin costs 5 credits</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const slot1 = document.getElementById('slot1');
+            const slot2 = document.getElementById('slot2');
+            const slot3 = document.getElementById('slot3');
+            const spinBtn = document.getElementById('spin-btn');
+            const creditsDisplay = document.getElementById('credits');
+            const messageDiv = document.getElementById('message');
+            const flagDiv = document.getElementById('flag');
+            
+            // Game state
+            let credits = 100;
+            const spinCost = 5;
+            
+            // The flag, obfuscated using simple XOR encryption
+            // This is "CTF{M4st3r_0f_H77P_R3qu3st_M4n1pul4t10n!}" XOR encrypted
+            const encryptedFlag = [
+                24, 31, 21, 119, 22, 112, 7, 30, 71, 1, 69, 12, 33, 76, 
+                31, 3, 19, 82, 75, 70, 24, 94, 3, 92, 12, 31, 85, 
+                18, 27, 96, 62, 29, 6, 30, 30, 31, 90, 21, 96, 31, 124, 31, 21
+            ];
+            const xorKey = 42; // The key used for XOR encryption
+
+            // Decrypt the flag when needed
+            function decryptFlag() {
+                let decrypted = "";
+                for (let i = 0; i < encryptedFlag.length; i++) {
+                    decrypted += String.fromCharCode(encryptedFlag[i] ^ xorKey);
+                }
+                return decrypted;
+            }
+            
+            // Event listener for spin button
+            spinBtn.addEventListener('click', function() {
+                if (credits < spinCost) {
+                    showMessage('Not enough credits!', false);
+                    return;
+                }
+                
+                credits -= spinCost;
+                creditsDisplay.textContent = credits;
+                
+                // Disable button during spin
+                spinBtn.disabled = true;
+                
+                // Reset slots
+                slot1.textContent = '?';
+                slot2.textContent = '?';
+                slot3.textContent = '?';
+                
+                // Hide any previous messages
+                messageDiv.style.display = 'none';
+                flagDiv.style.display = 'none';
+                
+                // Make an AJAX call to our "spin.php" endpoint
+                // In a CTF environment, this is where we'd make a real HTTP request
+                // that could be intercepted with Burp Suite
+                fetch('spin.php')
+                    .then(response => response.json())
+                    .catch(() => {
+                        // If the fetch fails (because we're not running a server),
+                        // fall back to simulated response
+                        return simulateSpinResponse();
+                    })
+                    .then(data => {
+                        // Process the response
+                        processSpinResponse(data);
+                        
+                        // Re-enable spin button
+                        spinBtn.disabled = false;
+                    });
+            });
+            
+            // Simulate the server's response since we don't have a real backend
+            function simulateSpinResponse() {
+                // Check if we should use preset values from URL (for exploitation)
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // This simulates the vulnerable debug mode in spin.php
+                if (urlParams.get('debug') === 'true' && 
+                    urlParams.has('slot1') && 
+                    urlParams.has('slot2') && 
+                    urlParams.has('slot3')) {
+                    
+                    const slot1Val = parseInt(urlParams.get('slot1'));
+                    const slot2Val = parseInt(urlParams.get('slot2'));
+                    const slot3Val = parseInt(urlParams.get('slot3'));
+                    
+                    return {
+                        slots: [
+                            Math.max(1, Math.min(9, slot1Val || 1)),
+                            Math.max(1, Math.min(9, slot2Val || 1)),
+                            Math.max(1, Math.min(9, slot3Val || 1))
+                        ],
+                        credits: credits
+                    };
+                }
+                
+                // Generate random slots (1-9)
+                return {
+                    slots: [
+                        Math.floor(Math.random() * 9) + 1,
+                        Math.floor(Math.random() * 9) + 1,
+                        Math.floor(Math.random() * 9) + 1
+                    ],
+                    credits: credits
+                };
+            }
+            
+            function processSpinResponse(data) {
+                // Update the slots display
+                slot1.textContent = data.slots[0];
+                slot2.textContent = data.slots[1];
+                slot3.textContent = data.slots[2];
+                
+                // Store the last spin result in localStorage for getflag.php to check
+                localStorage.setItem('lastSlots', JSON.stringify(data.slots));
+                
+                // Check if we won
+                checkWin(data.slots);
+            }
+            
+            function checkWin(slots) {
+                // Check if all slots are 7 (jackpot)
+                if (slots[0] === 7 && slots[1] === 7 && slots[2] === 7) {
+                    // Jackpot win!
+                    credits += 500;
+                    creditsDisplay.textContent = credits;
+                    
+                    showMessage('🎉 JACKPOT! You win 500 credits! 🎉', true);
+                    
+                    // Show flag for jackpot
+                    getFlag();
+                    
+                    // Trigger jackpot animation
+                    triggerJackpotAnimation();
+                }
+                // Check for other wins
+                else if (slots[0] === slots[1] && slots[1] === slots[2]) {
+                    // Three of a kind
+                    const winAmount = slots[0] * 10;
+                    credits += winAmount;
+                    creditsDisplay.textContent = credits;
+                    
+                    showMessage(`Three of a kind! You win ${winAmount} credits!`, true);
+                }
+                else if (slots[0] === slots[1] || slots[1] === slots[2] || slots[0] === slots[2]) {
+                    // Two of a kind
+                    const winAmount = 5;
+                    credits += winAmount;
+                    creditsDisplay.textContent = credits;
+                    
+                    showMessage(`Two of a kind! You win ${winAmount} credits!`, true);
+                }
+                else {
+                    showMessage('No win. Try again!', false);
+                }
+            }
+            
+            function showMessage(msg, isWin) {
+                messageDiv.textContent = msg;
+                messageDiv.style.display = 'block';
+                
+                if (isWin) {
+                    messageDiv.className = 'message win';
+                } else {
+                    messageDiv.className = 'message';
+                }
+            }
+            
+            // Make a request to getflag.php to get the flag
+            function getFlag() {
+                // This would be a real HTTP request in a CTF environment
+                fetch('getflag.php')
+                    .then(response => response.json())
+                    .catch(() => {
+                        // If fetch fails, simulate the response
+                        return simulateGetFlagResponse();
+                    })
+                    .then(data => {
+                        if (data.success && data.flag) {
+                            flagDiv.textContent = `🚩 ${data.flag}`;
+                            flagDiv.style.display = 'block';
+                        }
+                    });
+            }
+            
+            // Simulate the getflag.php response
+            function simulateGetFlagResponse() {
+                // Get the last slots from localStorage
+                const lastSlotsString = localStorage.getItem('lastSlots');
+                let lastSlots = null;
+                if (lastSlotsString) {
+                    try {
+                        lastSlots = JSON.parse(lastSlotsString);
+                    } catch (e) {
+                        console.error('Error parsing last slots:', e);
+                    }
+                }
+                
+                // Check validations similar to getflag.php
+                let validRequest = false;
+                let validJackpot = false;
+                let validToken = false;
+                
+                // Check if the request has a valid referer
+                // In a real CTF, this would check if the HTTP_REFERER header matches the current host
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('simulate_referer') === 'true') {
+                    validRequest = true;
+                }
+                
+                // Check if the last slots were all 7s
+                if (lastSlots && lastSlots[0] === 7 && lastSlots[1] === 7 && lastSlots[2] === 7) {
+                    validJackpot = true;
+                }
+                
+                // Check if the jackpot token cookie is set
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith('jackpot_token=')) {
+                        const token = cookie.substring('jackpot_token='.length);
+                        // Expected token is base64 of "jackpot:true"
+                        const expectedToken = btoa('jackpot:true');
+                        if (token === expectedToken) {
+                            validToken = true;
+                        }
+                    }
+                }
+                
+                // Simulate the vulnerable logic: only ONE validation needs to pass
+                if (validRequest || validJackpot || validToken) {
+                    return {
+                        success: true,
+                        flag: decryptFlag()
+                    };
+                } else {
+                    return {
+                        success: false,
+                        message: 'Invalid request or no jackpot won'
+                    };
+                }
+            }
+            
+            function triggerJackpotAnimation() {
+                const jackpotDiv = document.getElementById('jackpot-animation');
+                jackpotDiv.style.display = 'block';
+                
+                // Create falling coins effect
+                for (let i = 0; i < 50; i++) {
+                    const coin = document.createElement('div');
+                    coin.style.position = 'absolute';
+                    coin.style.left = `${Math.random() * 100}%`;
+                    coin.style.top = '-50px';
+                    coin.style.fontSize = `${Math.random() * 20 + 20}px`;
+                    coin.style.opacity = Math.random() * 0.7 + 0.3;
+                    coin.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    coin.style.color = 'gold';
+                    coin.style.textShadow = '0 0 10px rgba(255, 215, 0, 0.7)';
+                    coin.textContent = '🪙';
+                    coin.style.transition = 'top 1s ease-in, transform 1s ease-in';
+                    
+                    jackpotDiv.appendChild(coin);
+                    
+                    setTimeout(() => {
+                        coin.style.top = `${Math.random() * 100 + 100}%`;
+                        coin.style.transform = `rotate(${Math.random() * 360 + 360}deg)`;
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        coin.remove();
+                    }, 2000);
+                }
+                
+                setTimeout(() => {
+                    jackpotDiv.style.display = 'none';
+                    while (jackpotDiv.firstChild) {
+                        jackpotDiv.removeChild(jackpotDiv.firstChild);
+                    }
+                }, 2000);
+            }
+            
+            // Check for direct access to getflag.php
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('get_flag') === 'true') {
+                getFlag();
+            }
+        });
+    </script>
+</body>
+</html>

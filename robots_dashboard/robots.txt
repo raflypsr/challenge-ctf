@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /asdsa024nsfd01372021.html
+

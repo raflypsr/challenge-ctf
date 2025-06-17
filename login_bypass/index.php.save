@@ -1,0 +1,41 @@
+<?php
+$conn = new SQLite3('/var/www/html/db.sqlite');
+
+if (!$conn) {
+    die("Connection failed");
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST["username"] ?? '';
+    $password = $_POST["password"] ?? '';
+    $sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+    $result = $conn->query($sql);
+
+    if ($result && $result->fetchArray()) {
+        echo "<h1>Login Berhasil!</h1>";
+        echo "<p>Flag: " . file_get_contents("./flag.txt") . "</p>";
+    } else {
+        echo "<p>Login gagal.</p>";
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body { font-family: sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    form { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    input { display: block; margin: 1rem 0; padding: .5rem; width: 100%; 
+  </style>
+</head>
+<body>
+  <form method="post">
+    <h2>Login</h2>
+    <input type="text" name="username" placeholder="Username" />
+    <input type="password" name="password" placeholder="Password" />
+    <input type="submit" value="Login" />
+  </form>
+</body>
+</html>
+

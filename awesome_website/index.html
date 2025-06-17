@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Our Website</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #50b3a2;
+            color: white;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+        }
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            overflow: hidden;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        header .highlight, header .current a {
+            color: #e8491d;
+            font-weight: bold;
+        }
+        header a:hover {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        #showcase {
+            min-height: 400px;
+            background: url('/api/placeholder/1200/400') no-repeat center;
+            background-size: cover;
+            text-align: center;
+            color: black;
+        }
+        #showcase h1 {
+            margin-top: 100px;
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+        #showcase p {
+            font-size: 20px;
+        }
+        button {
+            height: 50px;
+            background: #e8491d;
+            border: 0;
+            padding-left: 40px;
+            padding-right: 40px;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #333;
+        }
+        .boxes {
+            margin-top: 20px;
+        }
+        .box {
+            float: left;
+            width: 30%;
+            padding: 10px;
+            text-align: center;
+        }
+        footer {
+            padding: 20px;
+            margin-top: 20px;
+            color: white;
+            background-color: #e8491d;
+            text-align: center;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            width: 70%;
+            max-width: 500px;
+            box-shadow: 0 5px 8px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Forbidden page */
+        .forbidden {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f4f4f4;
+            overflow: auto;
+        }
+        
+        .forbidden-content {
+            margin: 15% auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        .forbidden h1 {
+            font-size: 72px;
+            color: #e8491d;
+            margin-bottom: 20px;
+        }
+        
+        .forbidden p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: #50b3a2;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        @media(max-width: 768px) {
+            header #branding,
+            header nav,
+            header nav li,
+            .box {
+                float: none;
+                text-align: center;
+                width: 100%;
+            }
+            
+            header {
+                padding-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">Awesome</span> Website</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="#" id="home-link">Home</a></li>
+                    <li><a href="#" id="about-link">About</a></li>
+                    <li><a href="#" id="services-link">Services</a></li>
+                    <li><a href="#" id="settings-link">Settings</a></li>
+                    <li><a href="#" id="contact-link">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="showcase">
+        <div class="container">
+            <h1>Welcome to Our Amazing Website</h1>
+            <p>We create beautiful and functional websites that help you grow your business</p>
+            <button id="learn-more">Learn More</button>
+        </div>
+    </section>
+
+    <section class="boxes clearfix">
+        <div class="container">
+            <div class="box">
+                <h3>Web Design</h3>
+                <p>Professional web design tailored to your needs.</p>
+            </div>
+            <div class="box">
+                <h3>Web Development</h3>
+                <p>Custom web applications to power your business.</p>
+            </div>
+            <div class="box">
+                <h3>Digital Marketing</h3>
+                <p>Strategies to help your website reach more people.</p>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>Copyright &copy; 2025 | Your Awesome Website</p>
+    </footer>
+    
+    <!-- Modal -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>More Information</h2>
+            <p>Our team of expert designers and developers is dedicated to creating high-quality websites that meet your specific needs.</p>
+            <p>We offer a range of services including:</p>
+            <ul>
+                <li>Responsive web design</li>
+                <li>E-commerce solutions</li>
+                <li>Content management systems</li> 
+                <li>Search engine optimization</li>
+            </ul>
+            <p>Contact us today to discuss your project!</p>
+        </div>
+    </div>
+    
+    <!-- Forbidden Page -->
+    <div id="forbidden-page" class="forbidden">
+        <div class="forbidden-content">
+            <h1>403</h1>
+            <h2>Access Forbidden</h2>
+            <p>Sorry, you don't have permission to access this page.</p>
+            <p>Please contact your administrator for access rights.</p>
+            <a href="#" class="back-btn" id="back-btn">Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        // Site configuration object
+        const config = {
+            // Main site configuration
+            site: {
+                name: "Awesome Website",
+                version: "1.5.2",
+                domain: "example.com",
+                environment: "production",
+                debug: false,
+                maintenanceMode: false,
+                cookiesEnabled: true
+            },
+            
+            // Feature toggles
+            features: {
+                darkMode: false,
+                comments: true,
+                userAccounts: true,
+                notifications: true
+            },
+            
+            // API configuration
+            api: {
+                baseUrl: "https://api.example.com/v2",
+                timeout: 5000,
+                retryAttempts: 3,
+                cacheTTL: 3600,
+                accessToken: "SUROX0ZMQUd7VzNCXzNOQ29kM183UjFjazF9" // Access token for API authentication
+            },
+            
+            // Analytics configuration
+            analytics: {
+                provider: "GoogleAnalytics",
+                trackingId: "UA-XXXXX-Y",
+                anonymizeIp: true,
+                sessionTimeout: 30
+            },
+            
+            // Performance settings
+            performance: {
+                lazyLoading: true,
+                prefetch: true,
+                minification: true,
+                compression: true
+            }
+        };
+        
+        // Modal functionality
+        const modal = document.getElementById("info-modal");
+        const learnMoreBtn = document.getElementById("learn-more");
+        const closeBtn = document.querySelector(".close-btn");
+        
+        learnMoreBtn.addEventListener("click", function() {
+            modal.style.display = "block";
+        });
+        
+        closeBtn.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+        
+        window.addEventListener("click", function(e) {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+        
+        // Forbidden page functionality
+        const forbiddenPage = document.getElementById("forbidden-page");
+        const backBtn = document.getElementById("back-btn");
+        
+        // Make all navigation links show forbidden page
+        const navLinks = [
+            document.getElementById("about-link"),
+            document.getElementById("services-link"),
+            document.getElementById("settings-link"),
+            document.getElementById("contact-link")
+        ];
+        
+        navLinks.forEach(link => {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                forbiddenPage.style.display = "block";
+            });
+        });
+        
+        // Home link should not show forbidden
+        document.getElementById("home-link").addEventListener("click", function(e) {
+            e.preventDefault();
+            forbiddenPage.style.display = "none";
+        });
+        
+        // Back button
+        backBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            forbiddenPage.style.display = "none";
+        });
+        
+        // Initialize site
+        function initSite() {
+            if (config.site.debug) {
+                console.log("Site initialized with config:", config);
+            }
+            
+            // Check for maintenance mode
+            if (config.site.maintenanceMode) {
+                alert("This website is currently under maintenance. Some features may not be available.");
+            }
+            
+            // Set up API connection
+            setupAPI();
+            
+            // Set up analytics
+            if (config.analytics.trackingId) {
+                initAnalytics();
+            }
+        }
+        
+        // Setup API connection
+        function setupAPI() {
+            if (config.site.debug) {
+                console.log("API initialized with base URL:", config.api.baseUrl);
+                console.log("Using access token:", "********"); // Don't log actual token in production
+            }
+            
+            // In a real application, this would set up the API connection
+        }
+        
+        // Initialize analytics
+        function initAnalytics() {
+            if (config.site.debug) {
+                console.log("Analytics initialized with provider:", config.analytics.provider);
+            }
+            
+            // In a real application, this would set up analytics
+        }
+        
+        // Initialize the site when DOM is loaded
+        document.addEventListener("DOMContentLoaded", initSite);
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Lab 5: Client-Side Privilege Escalation</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f7f9fc;
+    margin: 0;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .container {
+    background: #fff;
+    max-width: 480px;
+    width: 100%;
+    padding: 2rem 2.25rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  }
+  h1 {
+    font-size: 1.9rem;
+    margin-bottom: 1.25rem;
+    font-weight: 700;
+    color: #222;
+  }
+  p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+  button {
+    padding: 0.7rem 1.5rem;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #357abd;
+  }
+  #status, #content, #hint {
+    margin-top: 1.25rem;
+    font-size: 1rem;
+    background: #eef5fc;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: inset 0 0 8px #d6e3fc;
+    color: #212121;
+    min-height: 50px;
+  }
+  #content {
+    white-space: pre-wrap;
+    min-height: 100px;
+  }
+  #hint {
+    background: #f0f4fc;
+    color: #444;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Lab 5: Client-Side Privilege Escalation</h1>
+  <p>Check your current role and try to access the protected content.</p>
+  <div id="status"></div>
+  <button onclick="showContent()">Show Protected Content</button>
+  <div id="content"></div>
+  <div id="hint">
+    Hint: Try to manipulate your role by editing <code>localStorage</code> in the browser console.
+  </div>
+</div>
+
+<script>
+  const FLAG_5 = "FLAG{client_side_privilege_escalation}";
+
+  // Initialize the role in localStorage if not set
+  if (!localStorage.getItem("user_role")) {
+    localStorage.setItem("user_role", "guest");
+  }
+
+  // Show current role status
+  function updateStatus() {
+    const role = localStorage.getItem("user_role");
+    document.getElementById("status").textContent = `Current Role: ${role}`;
+  }
+
+  updateStatus();
+
+  // Show content depending on role
+  function showContent() {
+    const role = localStorage.getItem("user_role");
+    let contentDiv = document.getElementById("content");
+    if (role === "admin") {
+      contentDiv.textContent = `Welcome, mighty admin! Here is your confidential flag:\n\n${FLAG_5}`;
+    } else {
+      contentDiv.textContent = "Access denied. You must be an admin to see the secret content.";
+    }
+  }
+</script>
+</body>
+</html>

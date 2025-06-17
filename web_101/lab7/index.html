@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lab 7: Node.js VM Sandbox Escape (Simulated)</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f7f9fc;
+    margin: 0;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .container {
+    background: #fff;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 2rem 2.5rem;
+  }
+  h1 {
+    font-weight: 700;
+    color: #222;
+    font-size: 1.9rem;
+    margin-bottom: 1rem;
+  }
+  p em {
+    color: #777;
+    font-size: 0.9rem;
+  }
+  textarea {
+    width: 100%;
+    font-size: 1rem;
+    font-family: monospace;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 0.6rem 0.9rem;
+    height: 120px;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74,144,226,0.6);
+  }
+  button {
+    margin-top: 1rem;
+    background-color: #4a90e2;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.65rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #357abd;
+  }
+  #output {
+    margin-top: 1.5rem;
+    background: #f0f4fc;
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px #dbe9fd;
+    font-family: monospace;
+    font-size: 1rem;
+    white-space: pre-wrap;
+    padding: 1rem;
+    color: #222;
+    min-height: 80px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Lab 7: Node.js VM Sandbox Escape (Simulated)</h1>
+<p><em>Note: This is a simulation of a Node.js VM sandbox in browser JavaScript</em></p>
+<p>Enter JavaScript code to run inside the sandbox:</p>
+<textarea id="sandboxInput" spellcheck="false" autocomplete="off" placeholder="Run code here..."></textarea>
+<button onclick="runSandbox()">Run</button>
+<div id="output" aria-live="polite"></div>
+</div>
+
+<script>
+  // Flag is only readable if sandbox escape is achieved
+  const FLAG_7 = "FLAG{vm_sandbox_escape_achieved}";
+
+  // Simulate sandbox environment
+  function runSandboxCode(code) {
+    const sandbox = {
+      console: { log: (...args) => sandbox.output += args.join(' ') + "\\n" },
+      flag: undefined  // hidden from sandbox
+    };
+    sandbox.output = "";
+    try {
+      // Unsafe: eval inside sandbox context with 'with'
+      with(sandbox) {
+        eval(code);
+      }
+    } catch(e) {
+      sandbox.output += "Error: " + e.message + "\\n";
+    }
+    return sandbox.output;
+  }
+
+  function runSandbox() {
+    let code = document.getElementById("sandboxInput").value;
+    let outputDiv = document.getElementById("output");
+    let output = runSandboxCode(code);
+
+    // Simulate that if code accesses global __FLAG__, user has escaped sandbox
+    if(output.indexOf("__FLAG__") !== -1) {
+      output += "\\nCongrats! You accessed the flag: " + FLAG_7;
+    }
+    outputDiv.textContent = output || "No output";
+  }
+
+  // Hint:
+  // Try payload:
+  // console.log(Function("return this")().__FLAG__ = "__FLAG__");
+</script>
+</body>
+</html>

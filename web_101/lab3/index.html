@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Lab 3: Prototype Pollution</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  .container {
+    background: #fff;
+    max-width: 560px;
+    width: 100%;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  h1 {
+    margin-bottom: 1.1rem;
+    color: #212121;
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
+  p {
+    color: #555;
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+  }
+  textarea {
+    width: 100%;
+    height: 100px;
+    resize: vertical;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: monospace;
+    font-size: 1rem;
+    padding: 0.6rem 0.8rem;
+    transition: border-color 0.3s ease;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 6px rgba(74,144,226,0.5);
+  }
+  button {
+    margin-top: 1rem;
+    background-color: #4a90e2;
+    color: white;
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #357abd;
+  }
+  #output {
+    margin-top: 1.5rem;
+    background: #f0f4fc;
+    border-radius: 10px;
+    padding: 1rem;
+    color: #222;
+    font-family: monospace;
+    font-size: 1.05rem;
+    white-space: pre-wrap;
+    box-shadow: inset 0 0 8px #dbe9fd;
+    min-height: 60px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Lab 3: Prototype Pollution Demo</h1>
+<p>Submit JSON data to update the app config (e.g. {"theme":"dark"}):</p>
+<textarea id="jsonInput" spellcheck="false" autocomplete="off" placeholder='Enter JSON here...'></textarea><br/>
+<button onclick="updateConfig()">Update Config</button>
+<div id="output" aria-live="polite"></div>
+</div>
+
+<script>
+  const FLAG_3 = "FLAG{prototype_pollution_success}";
+
+  let appConfig = {
+    theme: "light",
+    secure: false,
+    admin: false
+  };
+
+  function merge(target, source) {
+    for (let key in source) {
+      if (typeof source[key] === 'object' && source[key] !== null) {
+        if (!target[key]) target[key] = {};
+        merge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  function updateConfig() {
+    const outputDiv = document.getElementById("output");
+    try {
+      const userData = JSON.parse(document.getElementById("jsonInput").value);
+      merge(appConfig, userData);
+      let message = "Config updated: " + JSON.stringify(appConfig) + "\\n";
+
+      // Check if admin leaked due to prototype pollution
+      if ({}.admin === true || appConfig.admin === true) {
+        message += "Admin privilege escalated! Flag: " + FLAG_3;
+      } else {
+        message += "No admin rights detected.";
+      }
+      outputDiv.textContent = message;
+    } catch(e) {
+      outputDiv.textContent = "Invalid JSON or error: " + e.message;
+    }
+  }
+
+  // Hint:
+  // To exploit prototype pollution, submit:
+  // {"__proto__": {"admin": true}}
+</script>
+</body>
+</html>
